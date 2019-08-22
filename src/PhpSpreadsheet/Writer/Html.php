@@ -803,6 +803,25 @@ class Html extends BaseWriter
             $css['html']['font-size'] = '11pt';
             $css['html']['background-color'] = 'white';
         }
+        
+        // Margins
+        $left = StringHelper::formatNumber($pSheet->getPageMargins()->getLeft()) . 'in; ';
+        $right = StringHelper::formatNumber($pSheet->getPageMargins()->getRight()) . 'in; ';
+        $top = StringHelper::formatNumber($pSheet->getPageMargins()->getTop()) . 'in; ';
+        $bottom = StringHelper::formatNumber($pSheet->getPageMargins()->getBottom()) . 'in; ';
+        
+        $css['body'] = [
+            'margin-left' => $left,
+            'margin-right' => $right,
+            'margin-top' => $top
+            'margin-bottom' => $bottom
+        ];
+        $css['@page'] = [
+            'margin-left' => $left,
+            'margin-right' => $right,
+            'margin-top' => $top
+            'margin-bottom' => $bottom
+        ];
 
         // CSS for comments as found in LibreOffice
         $css['a.comment-indicator:hover + div.comment'] = [
@@ -1105,7 +1124,6 @@ class Html extends BaseWriter
 
         // Construct HTML
         $html = '';
-        $html .= $this->setMargins($pSheet);
 
         if (!$this->useInlineCss) {
             $gridlines = $pSheet->getShowGridlines() ? ' gridlines' : '';
@@ -1611,30 +1629,6 @@ class Html extends BaseWriter
 
         // We have calculated the spans
         $this->spansAreCalculated = true;
-    }
-
-    private function setMargins(Worksheet $pSheet)
-    {
-        $htmlPage = '@page { ';
-        $htmlBody = 'body { ';
-
-        $left = StringHelper::formatNumber($pSheet->getPageMargins()->getLeft()) . 'in; ';
-        $htmlPage .= 'margin-left: ' . $left;
-        $htmlBody .= 'margin-left: ' . $left;
-        $right = StringHelper::formatNumber($pSheet->getPageMargins()->getRight()) . 'in; ';
-        $htmlPage .= 'margin-right: ' . $right;
-        $htmlBody .= 'margin-right: ' . $right;
-        $top = StringHelper::formatNumber($pSheet->getPageMargins()->getTop()) . 'in; ';
-        $htmlPage .= 'margin-top: ' . $top;
-        $htmlBody .= 'margin-top: ' . $top;
-        $bottom = StringHelper::formatNumber($pSheet->getPageMargins()->getBottom()) . 'in; ';
-        $htmlPage .= 'margin-bottom: ' . $bottom;
-        $htmlBody .= 'margin-bottom: ' . $bottom;
-
-        $htmlPage .= "}\n";
-        $htmlBody .= "}\n";
-
-        return "<style>\n" . $htmlPage . $htmlBody . "</style>\n";
     }
 
     /**
